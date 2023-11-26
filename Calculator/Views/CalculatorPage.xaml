@@ -1,0 +1,195 @@
+﻿<UserControl x:Class="Calculator.Views.CalculatorPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModels="clr-namespace:Calculator.ViewModels"
+             mc:Ignorable="d"
+             d:DesignHeight="400" d:DesignWidth="400">
+
+    <UserControl.DataContext>
+        <viewModels:CalculatorVM />
+    </UserControl.DataContext>
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Assets/BaseStyle.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style x:Key="AddSymbolCalculatorButton" BasedOn="{StaticResource CalculatorButton}" TargetType="{x:Type Button}">
+                <Setter Property="Button.Command" Value="{Binding AddTextToExpressionCommand}" />
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBox Style="{StaticResource CalculatorTextBox}"
+                 Text="{Binding ExpressionText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+        <Button Grid.Row="1" Content="C"
+                Style="{StaticResource CalculatorButton}"
+                Command="{Binding ClearFieldCommand}" />
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Content="("
+                    Style="{StaticResource AddSymbolCalculatorButton}"
+                    CommandParameter="(" />
+
+            <Button Grid.Column="1"
+                    Content=")"
+                    Style="{StaticResource AddSymbolCalculatorButton}"
+                    CommandParameter=")" />
+
+            <Button Grid.Column="2"
+                    Style="{StaticResource CalculatorButton}"
+                    Padding="0"
+                    Command="{Binding BackspaceCommand}">
+                <Image Source="/Assets/Images/Backspace.png"
+                       Width="40" Height="50" />
+            </Button>
+
+            <Button Grid.Column="3"
+                    Content="/"
+                    Style="{StaticResource AddSymbolCalculatorButton}"
+                    CommandParameter="/" />
+        </Grid>
+
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Content="7"
+                    Style="{StaticResource AddSymbolCalculatorButton}"
+                    CommandParameter="7" />
+
+            <Button Grid.Column="1"
+                    Content="8"
+                    Style="{StaticResource AddSymbolCalculatorButton}"
+                    CommandParameter="8" />
+
+            <Button Grid.Column="2"
+                    Content="9"
+                    Style="{StaticResource AddSymbolCalculatorButton}"
+                    CommandParameter="9" />
+
+            <Button Grid.Column="3"
+                    Content="×"
+                    Style="{StaticResource AddSymbolCalculatorButton}"
+                    CommandParameter="×" />
+        </Grid>
+
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Content="4"
+                    Style="{StaticResource AddSymbolCalculatorButton}"
+                    CommandParameter="4" />
+
+            <Button Grid.Column="1"
+                    Content="5"
+                    Style="{StaticResource AddSymbolCalculatorButton}"
+                    CommandParameter="5" />
+
+            <Button Grid.Column="2"
+                    Content="6"
+                    Style="{StaticResource AddSymbolCalculatorButton}"
+                    CommandParameter="6" />
+
+            <Button Grid.Column="3"
+                    Content="-"
+                    Style="{StaticResource AddSymbolCalculatorButton}"
+                    CommandParameter="-" />
+        </Grid>
+
+        <Grid Grid.Row="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Content="1"
+                    Style="{StaticResource AddSymbolCalculatorButton}"
+                    CommandParameter="1" />
+
+            <Button Grid.Column="1"
+                    Content="2"
+                    Style="{StaticResource AddSymbolCalculatorButton}"
+                    CommandParameter="2" />
+
+            <Button Grid.Column="2"
+                    Content="3"
+                    Style="{StaticResource AddSymbolCalculatorButton}"
+                    CommandParameter="3" />
+
+            <Button Grid.Column="3"
+                    Content="+"
+                    Style="{StaticResource AddSymbolCalculatorButton}"
+                    CommandParameter="+" />
+        </Grid>
+
+        <Grid Grid.Row="6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Content="±"
+                    Style="{StaticResource CalculatorButton}"
+                    Command="{Binding NegateCommand}" />
+
+            <Button Grid.Column="1"
+                    Content="0"
+                    Style="{StaticResource AddSymbolCalculatorButton}"
+                    CommandParameter="0" />
+
+            <Button Grid.Column="2"
+                    Content=","
+                    Style="{StaticResource AddSymbolCalculatorButton}"
+                    CommandParameter="," />
+
+            <Button Grid.Column="3"
+                    Content="="
+                    Background="Red"
+                    Foreground="WhiteSmoke"
+                    Style="{StaticResource CalculatorButton}"
+                    Command="{Binding EvaluateExpressionCommand}">
+            </Button>
+        </Grid>
+    </Grid>
+</UserControl>
