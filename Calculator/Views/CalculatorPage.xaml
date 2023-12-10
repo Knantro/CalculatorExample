@@ -18,7 +18,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <Style x:Key="AddSymbolCalculatorButton" BasedOn="{StaticResource CalculatorButton}" TargetType="{x:Type Button}">
-                <Setter Property="Button.Command" Value="{Binding AddTextToExpressionCommand}" />
+                <Setter Property="Button.Command" Value="{Binding AddCharToExpressionCommand}" />
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
