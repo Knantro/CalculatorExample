@@ -1,8 +1,8 @@
 ﻿using System.Windows;
-using Calculator.Logic;
+using CalculatorExample.Logic;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Calculator;
+namespace CalculatorExample;
 
 /// <summary>
 /// Interaction logic for App.xaml
@@ -19,7 +19,5 @@ public partial class App : Application {
 
     private void ConfigureServices(IServiceCollection services) {
         services.AddTransient(typeof(MainWindow));
-
-        services.AddSingleton<CalculatorLogic>();
     }
 }

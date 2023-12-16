@@ -1,8 +1,8 @@
-﻿using Calculator.Models;
+﻿using CalculatorExample.Models;
 
-namespace Calculator.Logic; 
+namespace CalculatorExample.Logic; 
 
-public class CalculatorLogic {
+public static class Calculator {
     private const char NEGATE_MINUS = '-';
     private const string OPERATIONS = "+-×/";
     private const char OPEN_BRACE = '(';
@@ -18,26 +18,33 @@ public class CalculatorLogic {
     }
     
     /// <summary>
-    /// Вычислить выражение с валидацией
+    /// Вычисляет выражение с валидацией
     /// </summary>
     /// <param name="expression">Исходное выражение</param>
     /// <returns>Результат вычисления</returns>
-    public decimal EvaluateExpression(string expression) {
+    public static decimal EvaluateExpression(string expression) {
         ValidateExpression(expression);
         
-        return EvaluateOperation(expression);
+        return EvaluateExpressionInternal(expression);
     }
 
-    private decimal EvaluateOperation(string expression) {
+    /// <summary>
+    /// Вычисляет выражение (внутренний метод)
+    /// </summary>
+    /// <param name="expression">Исходное выражение</param>
+    /// <returns>Результат вычисления</returns>
+    private static decimal EvaluateExpressionInternal(string expression) {
         if (expression.Length == 0) {
             return 0;
         }
+
+        expression = EraseExtraBraces(expression);
         
         var operations = new List<Operation>();
         var currNumber = string.Empty;
         var leftNumber = (decimal?)null;
         var rightNumber = (decimal?)null;
-        var lastCharIsDigit = false;
+        var lastCharIsDigit = false; // Чтобы определить конец числа в строке.
         var currOperation = OperationType.None;
         
         for (var i = 0; i < expression.Length; i++) {
@@ -63,35 +70,49 @@ public class CalculatorLogic {
             }
 
             if (leftNumber != null && currOperation != OperationType.None && rightNumber != null) {
+                /*
+                 * Чтобы избежать задвоения, мы берём последнюю операцию из списка, так как после итерации
+                 * мы кладём то, что было справа - налево (ниже это показано).
+                 */ 
+                
+                // Левое число.
                 var leftOperation = operations.LastOrDefault() ?? new Operation {
                     Type = OperationType.None,
                     Value = leftNumber.Value
                 };
                 
+                // Сама операция.
                 var centralOperation = new Operation {
                     Type = currOperation
                 };
-
+                
+                // У левого числа справа от него будет идти операция.
                 leftOperation.Right = centralOperation;
                 
+                // Правое число. 
                 var rightOperation = new Operation {
                     Type = OperationType.None,
                     Value = rightNumber.Value
                 };
                 
-                if (operations.Count > 0) {
-                }
-                
+                // Слева у операции стоит левое число, справа - правое.
+                // У правого числа слева стоит операция.
                 centralOperation.Left = leftOperation;
                 centralOperation.Right = rightOperation;
                 rightOperation.Left = centralOperation;
 
+                /*
+                 * Не добавляем в список левую операцию, если список операций не пуст, т.к. может быть задвоение из-за того,
+                 * что мы берём в качестве левой операции ссылку на последнюю операцию из списка.
+                 */
                 if (operations.Count == 0) {
                     operations.Add(leftOperation);
                 }
+                // Добавляем операции в список.
                 operations.Add(centralOperation);
                 operations.Add(rightOperation);
 
+                // Перекладываем числа справа налево, добираем ещё одну операцию и одно число - снова создаём 2 новые операции в списке.
                 leftNumber = rightNumber;
                 currOperation = OperationType.None;
                 rightNumber = null;
@@ -101,7 +122,13 @@ public class CalculatorLogic {
             if (OPERATIONS.Contains(ch)) {
                 // Проверяем, что минус в выражении - не знак числа.
                 if (ch == NEGATE_MINUS && (i == 0 || expression[i - 1] == OPEN_BRACE)) {
-                    currNumber += ch;
+                    leftNumber = 0;
+                    currOperation = OperationType.Subtract;
+                    // currNumber += ch;
+                    // if (expression[i + 1] == OPEN_BRACE) {
+                    //     currNumber += 0;
+                    //     lastCharIsDigit = true;
+                    // }
                     continue;
                 }
                 
@@ -112,7 +139,7 @@ public class CalculatorLogic {
             if (ch == OPEN_BRACE) {
                 var index = i + 1;
                 var length = IndexOfLastClosingBrace(expression[i..]);
-                rightNumber = EvaluateOperation(expression.Substring(index, length - 1));
+                rightNumber = EvaluateExpressionInternal(expression.Substring(index, length - 1));
                 i = index + length - 2;
             }
 
@@ -125,7 +152,44 @@ public class CalculatorLogic {
         return leftNumber ?? 0;
     }
 
-    private OperationType MapOperation(char ch) => ch switch {
+    private static string EraseExtraBraces(string expression) {
+        var counter = 1;
+        bool foundExtraBraces;
+        do {
+            if (expression.First() != OPEN_BRACE || expression.Last() != CLOSE_BRACE) {
+                return expression;
+            }
+            
+            foundExtraBraces = false;
+            
+            for (var i = 1; i < expression.Length; i++) {
+                var ch = expression[i];
+                
+                if (ch == OPEN_BRACE) {
+                    counter++;
+                }
+
+                if (ch == CLOSE_BRACE) {
+                    counter--;
+                }
+
+                // Лишние скобки могут быть только по краям выражения, которые относятся друг к другу
+                if (counter == 0) {
+                    if (i + 1 == expression.Length) {
+                        foundExtraBraces = true;
+                        expression = expression[1..^1];
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+        } while (foundExtraBraces);
+
+        return expression;
+    }
+
+    private static OperationType MapOperation(char ch) => ch switch {
             '+' => OperationType.Add,
             '-' => OperationType.Subtract,
             '×' => OperationType.Multiply,
@@ -164,7 +228,7 @@ public class CalculatorLogic {
     /// <remarks>
     /// Считаются все операции внутри скобок или просто все операции выражения, если скобок нет.
     /// </remarks>
-    private decimal ComputeOperations(List<Operation> operations) {
+    private static decimal ComputeOperations(List<Operation> operations) {
         // Нам нужна стабильная сортировка, Array.Sort() - нестабильная сортировка.
         // Стабильная сортировка не меняет местами одинаковые по значению данные.
         operations = operations.Where(x => x.Type is not OperationType.None) // Просто числа не пытаемся прогонять через операции.

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace Calculator.Commands; 
+namespace CalculatorExample.Commands; 
 
 public class RelayCommand : ICommand {
     private Action<object?> execute;

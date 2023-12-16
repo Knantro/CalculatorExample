@@ -1,4 +1,4 @@
-﻿namespace Calculator.Models; 
+﻿namespace CalculatorExample.Models; 
 
 public enum OperationType {
     /// <summary>

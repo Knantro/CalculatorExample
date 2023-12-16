@@ -2,15 +2,13 @@
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Calculator.Commands;
-using Calculator.Logic;
+using CalculatorExample.Logic;
+using CalculatorExample.Commands;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Calculator.ViewModels;
+namespace CalculatorExample.ViewModels;
 
 public class CalculatorVM : INotifyPropertyChanged {
-    private readonly CalculatorLogic? logic = App.ServiceProvider.GetService<CalculatorLogic>();
-    
     private string expressionText;
     public string ExpressionText {
         get => expressionText;
@@ -50,7 +48,7 @@ public class CalculatorVM : INotifyPropertyChanged {
     /// Конструктор.
     /// </summary>
     public CalculatorVM() {
-        EvaluateExpressionCommand = new RelayCommand(_ => ExpressionText = logic?.EvaluateExpression(ExpressionText).ToString(CultureInfo.CurrentUICulture) ?? string.Empty);
+        EvaluateExpressionCommand = new RelayCommand(_ => ExpressionText = Calculator.EvaluateExpression(ExpressionText).ToString(CultureInfo.CurrentUICulture) ?? string.Empty);
         ClearFieldCommand = new RelayCommand(_ => ExpressionText = string.Empty);
         BackspaceCommand = new RelayCommand(_ => {
             if (!string.IsNullOrEmpty(expressionText)) {

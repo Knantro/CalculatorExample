@@ -1,4 +1,4 @@
-﻿namespace Calculator.Models; 
+﻿namespace CalculatorExample.Models; 
 
 /// <summary>
 /// Модель операции.
